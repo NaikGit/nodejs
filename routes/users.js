@@ -4,15 +4,22 @@ var User = require('../models/users');
 var passport = require('passport');
 var authenticate = require('../authenticate');
 
+const Users = require('../models/users');
 var router = express.Router();
 router.use(bodyParser.json());
 
 
 /* GET users listing. */
-router.get('/', (req, res, next) => {
-  res.send('respond with a resource');
+//Assignment 3 - Task 3
+router.get('/users',authenticate.verifyUser,authenticate.verifyAdmin,(req,res,next)=>{
+  Users.find({})
+  .then((users)=>{
+      res.statusCode = 200;
+      res.setHeader('Content-Type','application/json');
+      res.json(users);
+  }, (err)=>next(err))
+  .catch((err) => next (err));
 });
-
 
 router.post('/signup', (req, res, next) => {
   User.register(new User({username: req.body.username}), 
